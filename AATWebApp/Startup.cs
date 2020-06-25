@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Linq;
 
 namespace AATWebApp
 {
@@ -24,6 +29,9 @@ namespace AATWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddHttpClient<OAuthService>();
+            services.AddHttpClient<ApiManagerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +60,66 @@ namespace AATWebApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+    }
+
+    public class OAuthService
+    {
+        private readonly HttpClient _client;
+        private readonly IConfiguration _config;
+
+        public OAuthService(HttpClient client, IConfiguration config)
+        {
+            _client = client;
+            _config = config;
+        }
+
+        public async Task<string> GetOAuthToken()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, _config["oauth:endpoint"])
+            {
+                Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    {"client_id", _config["oauth:client_id"]},
+                    {"client_secret", _config["oauth:client_secret"]},
+                    {"grant_type", _config["oauth:grant_type"]},
+                    {"resource", _config["oauth:resource"]}
+                }.ToArray())
+            };
+
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            return (string)JObject.Parse(await response.Content.ReadAsStringAsync())["access_token"];
+        }
+    }
+
+    public class ApiManagerService
+    {
+        public HttpClient Client { get; }
+
+        public ApiManagerService(HttpClient client, OAuthService oauthService, IHostEnvironment env, IConfiguration config)
+        {
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", config["oauth:key"]);
+
+            AuthenticationHeaderValue auth;
+            if (env.IsDevelopment())
+            {
+                // Get Developer OAuth token
+                var token = oauthService.GetOAuthToken().Result;
+                auth = new AuthenticationHeaderValue("bearer", token);
+            }
+            else
+            {
+                // Get Managed Identity token
+                var tokenProvider = new AzureServiceTokenProvider();
+                var token = tokenProvider.GetAccessTokenAsync("").Result;
+                auth = new AuthenticationHeaderValue("bearer", token);
+            }
+
+            client.DefaultRequestHeaders.Authorization = auth;
+
+            Client = client;
         }
     }
 }
