@@ -12,6 +12,7 @@ using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace AATWebApp
@@ -32,6 +33,7 @@ namespace AATWebApp
 
             services.AddHttpClient<OAuthService>();
             services.AddHttpClient<ApiManagerService>();
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,25 +100,28 @@ namespace AATWebApp
     {
         public HttpClient Client { get; }
 
-        public ApiManagerService(HttpClient client, OAuthService oauthService, IHostEnvironment env, IConfiguration config)
+        public ApiManagerService(HttpClient client, OAuthService oauthService, IHostEnvironment env, IConfiguration config, ILogger<ApiManagerService> logger)
         {
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", config["oauth:key"]);
+            
+            string token;
 
-            AuthenticationHeaderValue auth;
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", config["api:key"]);
+            logger.LogCritical("api key: " + config["api:key"]);
+
             if (env.IsDevelopment())
             {
                 // Get Developer OAuth token
-                var token = oauthService.GetOAuthToken().Result;
-                auth = new AuthenticationHeaderValue("bearer", token);
+                token = oauthService.GetOAuthToken().Result;
             }
             else
             {
                 // Get Managed Identity token
                 var tokenProvider = new AzureServiceTokenProvider();
-                var token = tokenProvider.GetAccessTokenAsync("").Result;
-                auth = new AuthenticationHeaderValue("bearer", token);
+                token = tokenProvider.GetAccessTokenAsync(config["oauth:resource"]).Result;
             }
 
+            logger.LogCritical(token);
+            var auth = new AuthenticationHeaderValue("bearer", token);
             client.DefaultRequestHeaders.Authorization = auth;
 
             Client = client;
