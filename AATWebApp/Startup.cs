@@ -76,7 +76,7 @@ namespace AATWebApp
             _config = config;
         }
 
-        public async Task<string> GetOAuthToken()
+        public async Task<string> GetDeveloperToken()
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _config["oauth:endpoint"])
             {
@@ -111,7 +111,7 @@ namespace AATWebApp
             if (env.IsDevelopment())
             {
                 // Get Developer OAuth token
-                token = oauthService.GetOAuthToken().Result;
+                token = oauthService.GetDeveloperToken().Result;
             }
             else
             {
