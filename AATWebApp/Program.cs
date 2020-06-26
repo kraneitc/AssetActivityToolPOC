@@ -21,19 +21,6 @@ namespace AATWebApp
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, config) =>
-                {
-                    var builtConfig = config.Build();
-                    var tokenProvider = new AzureServiceTokenProvider();
-                    var kvClient = new KeyVaultClient(
-                        new KeyVaultClient.AuthenticationCallback(
-                            tokenProvider.KeyVaultTokenCallback));
-
-                    config.AddAzureKeyVault(
-                        $"https://{builtConfig["KeyVault:VaultName"]}.vault.azure.net/",
-                        kvClient,
-                        new DefaultKeyVaultSecretManager());
-                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

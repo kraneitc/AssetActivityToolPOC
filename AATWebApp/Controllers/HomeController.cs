@@ -26,7 +26,7 @@ namespace AATWebApp.Controllers
         {
 
             var result = await _apiManagerService.Client.GetAsync("https://sapn-enterpriseapim-poc2-ae-api.azure-api.net/sap-closeout/closeout");
-            return View();
+            return View(result.IsSuccessStatusCode);
         }
 
         public IActionResult Privacy()

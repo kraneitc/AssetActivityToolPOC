@@ -1,19 +1,15 @@
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 
 namespace AATWebApp
 {
@@ -31,7 +27,7 @@ namespace AATWebApp
         {
             services.AddControllersWithViews();
 
-            services.AddHttpClient<OAuthService>();
+            services.AddHttpClient<DeveloperService>();
             services.AddHttpClient<ApiManagerService>();
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
@@ -63,68 +59,55 @@ namespace AATWebApp
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-    }
 
-    public class OAuthService
-    {
-        private readonly HttpClient _client;
-        private readonly IConfiguration _config;
-
-        public OAuthService(HttpClient client, IConfiguration config)
+        public class DeveloperService
         {
-            _client = client;
-            _config = config;
-        }
+            private readonly HttpClient _client;
+            private readonly IConfiguration _config;
 
-        public async Task<string> GetDeveloperToken()
-        {
-            var request = new HttpRequestMessage(HttpMethod.Post, _config["oauth:endpoint"])
+            public DeveloperService(HttpClient client, IConfiguration config)
             {
-                Content = new FormUrlEncodedContent(new Dictionary<string, string>
-                {
-                    {"client_id", _config["oauth:client_id"]},
-                    {"client_secret", _config["oauth:client_secret"]},
-                    {"grant_type", _config["oauth:grant_type"]},
-                    {"resource", _config["oauth:resource"]}
-                }.ToArray())
-            };
-
-            var response = await _client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            return (string)JObject.Parse(await response.Content.ReadAsStringAsync())["access_token"];
-        }
-    }
-
-    public class ApiManagerService
-    {
-        public HttpClient Client { get; }
-
-        public ApiManagerService(HttpClient client, OAuthService oauthService, IHostEnvironment env, IConfiguration config, ILogger<ApiManagerService> logger)
-        {
-            
-            string token;
-
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", config["api:key"]);
-            logger.LogCritical("api key: " + config["api:key"]);
-
-            if (env.IsDevelopment())
-            {
-                // Get Developer OAuth token
-                token = oauthService.GetDeveloperToken().Result;
-            }
-            else
-            {
-                // Get Managed Identity token
-                var tokenProvider = new AzureServiceTokenProvider();
-                token = tokenProvider.GetAccessTokenAsync(config["oauth:resource"]).Result;
+                _client = client;
+                _config = config;
             }
 
-            logger.LogCritical(token);
-            var auth = new AuthenticationHeaderValue("bearer", token);
-            client.DefaultRequestHeaders.Authorization = auth;
+            public async Task<string> GetDeveloperToken()
+            {
 
-            Client = client;
+                var response = await _client.RequestAuthorizationCodeTokenAsync(
+                    new AuthorizationCodeTokenRequest
+                    {
+                        Address = _config["oauth:endpoint"],
+                        ClientId = _config["oauth:client_id"],
+                        ClientSecret = _config["oauth:client_secret"],
+                        Parameters = new Dictionary<string, string> { { "resource", _config["oauth:resource"] } }
+                    });
+
+                return response.AccessToken;
+            }
         }
+
+        public class ApiManagerService
+        {
+            public HttpClient Client { get; }
+
+            public ApiManagerService(HttpClient client, DeveloperService devService, IHostEnvironment env, IConfiguration config)
+            {
+
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", config["api:key"]);
+
+                // If DEV environment, get DEV OAuth token,
+                // else get Managed Identity token
+                var token = env.IsDevelopment() ? 
+                    devService.GetDeveloperToken().Result : 
+                    new AzureServiceTokenProvider().GetAccessTokenAsync(config["oauth:resource"]).Result;
+
+                var auth = new AuthenticationHeaderValue("bearer", token);
+                client.DefaultRequestHeaders.Authorization = auth;
+
+                Client = client;
+            }
+        }
+
     }
 }
