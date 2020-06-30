@@ -10,12 +10,13 @@
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.5.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.5" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AATShared_\AATShared_.csproj" />
+    <ProjectReference Include="..\AATShared\AATShared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

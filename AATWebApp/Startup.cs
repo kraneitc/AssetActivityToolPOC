@@ -21,8 +21,15 @@ namespace AATWebApp
         {
             services.AddControllersWithViews();
 
-            services.AddHttpClient<DeveloperService>();
+            services.AddOptions<ServiceSettings>()
+                .Configure<IConfiguration>((settings, configuration) =>
+                {
+                    configuration.GetSection("ServiceSettings").Bind(settings);
+                });
+
+            services.AddTransient<DeveloperService>();
             services.AddHttpClient<ApiManagerService>();
+
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
 

@@ -13,6 +13,7 @@ using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 [assembly: FunctionsStartup(typeof(AATFunctions.Startup))]
 
@@ -23,36 +24,14 @@ namespace AATFunctions
         
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            
+            builder.Services.AddLogging();
             builder.Services.AddOptions<ServiceSettings>()
                 .Configure<IConfiguration>((settings, configuration) =>
             {
                 configuration.GetSection("ServiceSettings").Bind(settings);
             });
 
-            var svcObject = Type.GetType("ServiceSettings");
-            var options = ActivatorUtilities.CreateInstance(builder.Services.BuildServiceProvider(), svcObject) as ServiceSettings;
-
-            if (Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT") == "Development")
-            {
-                X509Certificate2 devCert;
-                using (var certStore = new X509Store(StoreLocation.LocalMachine))
-                {
-                    certStore.Open(OpenFlags.ReadOnly);
-                    devCert = certStore.Certificates.Find(X509FindType.FindByThumbprint, options.DevCertThumbprint, true)[0];
-                }
-
-                builder.Services.AddHttpClient<DeveloperService>()
-                    .ConfigurePrimaryHttpMessageHandler(() =>
-                    {
-                        var handler = new HttpClientHandler();
-                        handler.ClientCertificates.Add(devCert);
-                        return handler;
-                    });
-            }
-
-
-
+            builder.Services.AddTransient<DeveloperService>();
             builder.Services.AddHttpClient<ApiManagerService>();
         }
     }

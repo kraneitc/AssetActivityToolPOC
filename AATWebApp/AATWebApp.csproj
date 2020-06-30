@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AATShared_\AATShared_.csproj" />
+    <ProjectReference Include="..\AATShared\AATShared.csproj" />
   </ItemGroup>
 
 </Project>
