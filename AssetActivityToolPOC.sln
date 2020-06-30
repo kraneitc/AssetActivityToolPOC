@@ -7,9 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AATWebApp", "AATWebApp\AATW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AATFunctions", "AATFunctions\AATFunctions.csproj", "{590694EF-EFDB-4438-81BB-7466BBF78B1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AATShared", "AATShared\AATShared.csproj", "{6D034BB4-3773-4EFD-A69A-F829E9430282}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AATShared_", "AATShared_\AATShared_.csproj", "{324405EA-ED31-4C7E-BDFF-B50CC5E4BA67}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		AATShared\AATShared.projitems*{590694ef-efdb-4438-81bb-7466bbf78b1d}*SharedItemsImports = 5
+		AATShared\AATShared.projitems*{fb6857ca-7aaf-4e8b-9323-8b85709d1f47}*SharedItemsImports = 5
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -23,10 +27,10 @@ Global
 		{590694EF-EFDB-4438-81BB-7466BBF78B1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{590694EF-EFDB-4438-81BB-7466BBF78B1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{590694EF-EFDB-4438-81BB-7466BBF78B1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D034BB4-3773-4EFD-A69A-F829E9430282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D034BB4-3773-4EFD-A69A-F829E9430282}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D034BB4-3773-4EFD-A69A-F829E9430282}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D034BB4-3773-4EFD-A69A-F829E9430282}.Release|Any CPU.Build.0 = Release|Any CPU
+		{324405EA-ED31-4C7E-BDFF-B50CC5E4BA67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{324405EA-ED31-4C7E-BDFF-B50CC5E4BA67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{324405EA-ED31-4C7E-BDFF-B50CC5E4BA67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{324405EA-ED31-4C7E-BDFF-B50CC5E4BA67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
