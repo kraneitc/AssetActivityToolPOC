@@ -10,5 +10,6 @@ namespace AATShared
     {
         public AuthorizationCodeTokenRequest TokenRequest { get; set; }
         public string ApiKey { get; set; }
+        public string DevCertThumbprint { get; set; }
     }
 }

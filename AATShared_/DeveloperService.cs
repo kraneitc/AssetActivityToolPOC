@@ -15,6 +15,7 @@ namespace AATShared
 
         public async Task<string> GetDeveloperToken(ServiceSettings settings)
         {
+
             var response = await _client.RequestAuthorizationCodeTokenAsync(settings.TokenRequest);
             return response.AccessToken;
         }
