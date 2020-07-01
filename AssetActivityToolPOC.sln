@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AATFunctions", "AATFunction
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AATShared", "AATShared\AATShared.csproj", "{9268AA49-07CF-4D8F-99C4-71686A7A1779}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AATWebApi", "AATWebApi\AATWebApi.csproj", "{5CD3309B-F565-4CCE-AD8A-72E0965CAE05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9268AA49-07CF-4D8F-99C4-71686A7A1779}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9268AA49-07CF-4D8F-99C4-71686A7A1779}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9268AA49-07CF-4D8F-99C4-71686A7A1779}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CD3309B-F565-4CCE-AD8A-72E0965CAE05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CD3309B-F565-4CCE-AD8A-72E0965CAE05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CD3309B-F565-4CCE-AD8A-72E0965CAE05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CD3309B-F565-4CCE-AD8A-72E0965CAE05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
