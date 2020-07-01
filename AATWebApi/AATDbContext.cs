@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AATWebApi;
+using AATWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AATWebApp
