@@ -28,8 +28,8 @@ namespace AATWebApi.Controllers
         [HttpGet]
         public IEnumerable<Product> Get()
         {
-            using var ctx = new AATDbContext();
-            return ctx.Product.ToList();
+            using var ctx = new pocattdbContext();
+            return ctx.Product.Take(5).ToList();
         }
     }
 }
