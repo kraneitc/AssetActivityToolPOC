@@ -29,7 +29,7 @@ namespace AATFunctions
 
             var result = await QueueService.QueueMessageAsync("pocaatsa", "aatqueue", "Message from AAT Function");
 
-            return new OkObjectResult(result.Value.InsertionTime);
+            return new OkObjectResult(responseMessage.IsSuccessStatusCode);
         }
 
 
