@@ -7,7 +7,6 @@ namespace AATWebApi.Models
     {
         public Product()
         {
-            SalesOrderDetail = new HashSet<SalesOrderDetail>();
         }
 
         public int ProductId { get; set; }
@@ -28,8 +27,5 @@ namespace AATWebApi.Models
         public Guid Rowguid { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual ProductCategory ProductCategory { get; set; }
-        public virtual ProductModel ProductModel { get; set; }
-        public virtual ICollection<SalesOrderDetail> SalesOrderDetail { get; set; }
     }
 }

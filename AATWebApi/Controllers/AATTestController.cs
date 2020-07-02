@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AATWebApi.Models;
-using AATWebApp;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace AATWebApi.Controllers
 {
@@ -13,23 +9,17 @@ namespace AATWebApi.Controllers
     [Route("[controller]")]
     public class AATTestController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly AATDbContext _context;
 
-        private readonly ILogger<AATTestController> _logger;
-
-        public AATTestController(ILogger<AATTestController> logger)
+        public AATTestController(AATDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
         public IEnumerable<Product> Get()
         {
-            using var ctx = new pocattdbContext();
-            return ctx.Product.Take(5).ToList();
+            return _context.Product.Take(5).ToList();
         }
     }
 }
