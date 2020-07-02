@@ -16,6 +16,17 @@
       "type": "appInsights.azure",
       "connectionId": "APPINSIGHTS_INSTRUMENTATIONKEY",
       "secretStore": "AzureAppSettings"
+    },
+    "storage1": {
+      "type": "storage",
+      "suggestion": "true",
+      "ignored": "true"
+    },
+    "mssql2": {
+      "type": "mssql",
+      "connectionId": "SqlServer",
+      "suggestion": "true",
+      "ignored": "true"
     }
   }
 }

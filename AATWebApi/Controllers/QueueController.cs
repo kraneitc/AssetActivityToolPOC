@@ -1,17 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using AATWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Azure;
-using Azure.Storage.Queues;
-using System;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
+using AATShared;
+using Azure;
 using Azure.Identity;
+using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
-using Microsoft.Azure.Services.AppAuthentication;
-using TokenCredential = Azure.Core.TokenCredential;
 
 namespace AATWebApi.Controllers
 {
@@ -33,7 +28,7 @@ namespace AATWebApi.Controllers
             return $"Message inserted at {result.Value.InsertionTime}";
         }
 
-        private static async Task<Response<SendReceipt>> QueueMessageAsync(string accountName, string queueName, string message)
+        public static async Task<Response<SendReceipt>> QueueMessageAsync(string accountName, string queueName, string message)
         {
             var queueEndpoint = $"https://{accountName}.queue.core.windows.net/{queueName}";
             var queueClient = new QueueClient(new Uri(queueEndpoint), new DefaultAzureCredential());

@@ -19,5 +19,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AATShared\AATShared.csproj" />
+  </ItemGroup>
+
 
 </Project>
