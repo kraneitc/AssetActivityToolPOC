@@ -24,10 +24,7 @@ namespace AATShared
                 devService.GetDeveloperToken(settings.Value) :
                 new AzureServiceTokenProvider().GetAccessTokenAsync(settings.Value.Resource);
 
-            var t = token.Result;
-            logger.LogError($"Token: {t}");
-
-            var auth = new AuthenticationHeaderValue("bearer", t);
+            var auth = new AuthenticationHeaderValue("bearer", token.Result);
             client.DefaultRequestHeaders.Authorization = auth;
 
             Client = client;

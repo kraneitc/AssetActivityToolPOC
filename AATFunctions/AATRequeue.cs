@@ -29,7 +29,8 @@ namespace AATFunctions
 
             var result = await QueueService.QueueMessageAsync("pocaatsa", "aatqueue", "Message from AAT Function");
 
-            return new OkObjectResult(responseMessage.IsSuccessStatusCode);
+            //return new OkObjectResult(responseMessage.IsSuccessStatusCode);
+            return new OkObjectResult(result.Value.InsertionTime);
         }
 
 
@@ -42,9 +43,9 @@ namespace AATFunctions
 
             var responseMessage = await _apiManagerService.Client.GetAsync("https://sapn-enterpriseapim-poc2-ae-api.azure-api.net/sap-closeout/closeout");
 
-            var result = await QueueService.QueueMessageAsync("pocaatsa", "aatqueue", "Message from AAT Function");
+            //var result = await QueueService.QueueMessageAsync("pocaatsa", "aatqueue", "Message from AAT Function");
 
-            return new OkObjectResult(result.Value.InsertionTime);
+            return new OkObjectResult(responseMessage.IsSuccessStatusCode);
         }
     }
 }
