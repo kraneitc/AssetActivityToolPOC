@@ -23,7 +23,7 @@ namespace AATShared
                 .WithAuthority(new Uri(settings.Authority))
                 .Build();
 
-            var response = await app.AcquireTokenForClient(new []{settings.Scope} )
+            var response = await app.AcquireTokenForClient(new []{$"{settings.Resource}/.default"} )
                 .ExecuteAsync();
 
             return response.AccessToken;
