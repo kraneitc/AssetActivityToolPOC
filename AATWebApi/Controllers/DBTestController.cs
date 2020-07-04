@@ -7,16 +7,16 @@ namespace AATWebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AATTestController : ControllerBase
+    public class DBTestController : ControllerBase
     {
         private readonly AATDbContext _context;
 
-        public AATTestController(AATDbContext context)
+        public DBTestController(AATDbContext context)
         {
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet] 
         public IEnumerable<Product> Get()
         {
             return _context.Product.Take(5).ToList();

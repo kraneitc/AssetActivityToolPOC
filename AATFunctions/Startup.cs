@@ -17,13 +17,15 @@ namespace AATFunctions
         
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddLogging();
+            builder.Services.AddLogging();  
 
             // Bind settings to ServiceSettings object
             builder.Services.AddOptions<ServiceSettings>()
                 .Configure<IConfiguration>((settings, configuration) => {
                 configuration.GetSection("ServiceSettings").Bind(settings);
             });
+
+            builder.Services.AddSingleton<QueueService>();
 
             // Adds service for developers to authenticate to API Manager using 
             // their SAPN-issued PC client certificate. Export the public key certificate
