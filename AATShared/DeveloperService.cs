@@ -18,7 +18,7 @@ namespace AATShared
                 devCert = certStore.Certificates.Find(X509FindType.FindByThumbprint, settings.DevCertThumbprint, true)[0];
             }
 
-            var app = ConfidentialClientApplicationBuilder.Create(settings.ClientId)
+            var app = ConfidentialClientApplicationBuilder.Create(settings.Resource)
                 .WithCertificate(devCert)
                 .WithAuthority(new Uri(settings.Authority))
                 .Build();

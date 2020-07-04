@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace AATShared
@@ -10,7 +11,7 @@ namespace AATShared
     {
         public HttpClient Client { get; }
 
-        public ApiManagerService(HttpClient client, DeveloperService devService, IOptions<ServiceSettings> settings)
+        public ApiManagerService(HttpClient client, DeveloperService devService, IOptions<ServiceSettings> settings, ILogger<ApiManagerService> logger)
         {
             
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", settings.Value.ApiKey);

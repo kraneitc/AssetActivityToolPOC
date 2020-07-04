@@ -5,6 +5,7 @@ namespace AATFunctions
 {
     public static class AATRetryAlert
     {
+
         [FunctionName("SAPRetryAlert")]
         public static void SAPRetryAlert([QueueTrigger("sap-closeout-queue-poison")]string myQueueItem, ILogger log)
         {

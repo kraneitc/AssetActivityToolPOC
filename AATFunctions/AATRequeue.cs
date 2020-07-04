@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading.Tasks;
 using AATShared;
 using Microsoft.AspNetCore.Mvc;
@@ -5,20 +6,13 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 
 namespace AATFunctions
 {
     public class AATRequeue
     {
-        private readonly ApiManagerService _apiManagerService;
-        private readonly QueueService _queueService;
-
-        public AATRequeue(ApiManagerService apiManagerService, QueueService queueService)
-        {
-            _apiManagerService = apiManagerService;
-            _queueService = queueService;
-        }
 
         [FunctionName("SAPRequeue")]
         public async Task<IActionResult> SAPRequeue(
@@ -27,11 +21,17 @@ namespace AATFunctions
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var responseMessage = await _apiManagerService.Client.GetAsync("https://sapn-enterpriseapim-poc2-ae-api.azure-api.net/sap-closeout/closeout");
-            var result = await _queueService.QueueMessageAsync("pocaatsa", "aatqueue", "Message from AAT Function");
+            string name = req.Query["name"];
 
-            return new OkObjectResult(responseMessage.IsSuccessStatusCode);
-            //return new OkObjectResult(result.Value.InsertionTime);
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            name = name ?? data?.name;
+
+            string responseMessage = string.IsNullOrEmpty(name)
+                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
+                : $"Hello, {name}. This HTTP triggered function executed successfully.";
+
+            return new OkObjectResult(responseMessage);
         }
 
 
@@ -42,11 +42,17 @@ namespace AATFunctions
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var responseMessage = await _apiManagerService.Client.GetAsync("https://sapn-enterpriseapim-poc2-ae-api.azure-api.net/sap-closeout/closeout");
+            string name = req.Query["name"];
 
-            var result = await _queueService.QueueMessageAsync("pocaatsa", "aatqueue", "Message from AAT Function");
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            name = name ?? data?.name;
 
-            return new OkObjectResult(responseMessage.IsSuccessStatusCode);
+            string responseMessage = string.IsNullOrEmpty(name)
+                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
+                : $"Hello, {name}. This HTTP triggered function executed successfully.";
+
+            return new OkObjectResult(responseMessage);
         }
     }
 }
