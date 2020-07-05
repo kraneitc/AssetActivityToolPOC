@@ -1,3 +1,6 @@
+using System.Reflection.Metadata.Ecma335;
+using System.Threading;
+using System.Threading.Tasks;
 using AATShared;
 using AATWebApi.Models;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AATWebApi
 {
@@ -28,14 +35,61 @@ namespace AATWebApi
             //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             //    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             //    {
-            //        options.Audience = "a95bcc88-192e-45d0-a4c3-f211c8ad550d";
-            //        options.Authority = "https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579";
-            //        options.Configuration = new OpenIdConnectConfiguration
+            //        options.TokenValidationParameters = new TokenValidationParameters
             //        {
-            //            AuthorizationEndpoint = "https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/.well-known/openid-configuration",
-            //            Issuer = "https://sts.windows.net/90f5a437-d7ed-4905-ad39-adc1f0d6b579/"
+            //            ValidateIssuer = true,
+            //            ValidIssuer = "https://sts.windows.net/90f5a437-d7ed-4905-ad39-adc1f0d6b579/",
+            //            ValidateAudience = true,
+            //            ValidAudience = "a95bcc88-192e-45d0-a4c3-f211c8ad550d",
+            //            ValidateLifetime = true
             //        };
             //    });
+
+            IdentityModelEventSource.ShowPII = true;
+
+            //var configManager = new ConfigurationManager<OpenIdConnectConfiguration>("https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/v2.0/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
+            //var openidconfig = configManager.GetConfigurationAsync().Result;
+
+            var openidconfig = OpenIdConnectConfigurationRetriever.GetAsync("https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/v2.0/.well-known/openid-configuration", CancellationToken.None).Result;
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(x =>
+                {
+                    x.Authority = "https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/";
+                    //x.RequireHttpsMetadata = false;
+                    //x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = openidconfig.Issuer,
+                        ValidAudience = "a95bcc88-192e-45d0-a4c3-f211c8ad550d",
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKeys = openidconfig.SigningKeys
+
+                    };
+                    //x.Events = new JwtBearerEvents
+                    //{
+                    //    OnChallenge = context =>
+                    //    {
+                    //        return Task.CompletedTask;
+                    //    },
+                    //    OnMessageReceived = context =>
+                    //    {
+                    //        return Task.CompletedTask;
+                    //    },
+                    //    OnTokenValidated = context =>
+                    //    {
+                    //        return Task.CompletedTask;
+                    //    },
+                    //    OnForbidden = context =>
+                    //    {
+                    //        return Task.CompletedTask;
+                    //    },
+                    //    OnAuthenticationFailed = context =>
+                    //    {
+                    //        return Task.CompletedTask;
+                    //    }
+                    //};
+                });
 
             services.AddSingleton<QueueService>();
             services.AddDbContext<AATDbContext>(options => 
@@ -52,8 +106,10 @@ namespace AATWebApi
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseAuthentication();
+            //app.UseIdentityServer();
+
 
             app.UseEndpoints(endpoints =>
             {

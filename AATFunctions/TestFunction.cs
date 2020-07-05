@@ -30,6 +30,7 @@ namespace AATFunctions
                 "https://sapn-enterpriseapim-poc2-ae-api.azure-api.net/sap-closeout/closeout");
 
             return new OkObjectResult(await responseMessage.Content.ReadAsStringAsync());
+            //return new OkObjectResult(responseMessage.IsSuccessStatusCode);
         }
 
 
