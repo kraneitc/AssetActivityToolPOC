@@ -29,7 +29,12 @@ namespace AATFunctions
             var responseMessage = await _apiManagerService.Client.GetAsync(
                 "https://sapn-enterpriseapim-poc2-ae-api.azure-api.net/sap-closeout/closeout");
 
-            return new OkObjectResult(await responseMessage.Content.ReadAsStringAsync());
+            return new OkObjectResult(new
+            {
+                Response = responseMessage.IsSuccessStatusCode,
+                Token = _apiManagerService.Client.DefaultRequestHeaders.Authorization.Parameter
+            });
+            //return new OkObjectResult(await responseMessage.Content.ReadAsStringAsync());
             //return new OkObjectResult(responseMessage.IsSuccessStatusCode);
         }
 

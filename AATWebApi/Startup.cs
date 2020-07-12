@@ -32,63 +32,21 @@ namespace AATWebApi
         {
             services.AddControllers();
 
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-            //    {
-            //        options.TokenValidationParameters = new TokenValidationParameters
-            //        {
-            //            ValidateIssuer = true,
-            //            ValidIssuer = "https://sts.windows.net/90f5a437-d7ed-4905-ad39-adc1f0d6b579/",
-            //            ValidateAudience = true,
-            //            ValidAudience = "a95bcc88-192e-45d0-a4c3-f211c8ad550d",
-            //            ValidateLifetime = true
-            //        };
-            //    });
-
             IdentityModelEventSource.ShowPII = true;
-
-            //var configManager = new ConfigurationManager<OpenIdConnectConfiguration>("https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/v2.0/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
-            //var openidconfig = configManager.GetConfigurationAsync().Result;
 
             var openidconfig = OpenIdConnectConfigurationRetriever.GetAsync("https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/v2.0/.well-known/openid-configuration", CancellationToken.None).Result;
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(x =>
+                .AddJwtBearer(options =>
                 {
-                    x.Authority = "https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/";
-                    //x.RequireHttpsMetadata = false;
-                    //x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
+                    options.Authority = "https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/";
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidIssuer = openidconfig.Issuer,
-                        ValidAudience = "a95bcc88-192e-45d0-a4c3-f211c8ad550d",
+                        ValidAudience = "53fc8f4f-f205-4c2b-968f-67a766f7cdd9",
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKeys = openidconfig.SigningKeys
-
                     };
-                    //x.Events = new JwtBearerEvents
-                    //{
-                    //    OnChallenge = context =>
-                    //    {
-                    //        return Task.CompletedTask;
-                    //    },
-                    //    OnMessageReceived = context =>
-                    //    {
-                    //        return Task.CompletedTask;
-                    //    },
-                    //    OnTokenValidated = context =>
-                    //    {
-                    //        return Task.CompletedTask;
-                    //    },
-                    //    OnForbidden = context =>
-                    //    {
-                    //        return Task.CompletedTask;
-                    //    },
-                    //    OnAuthenticationFailed = context =>
-                    //    {
-                    //        return Task.CompletedTask;
-                    //    }
-                    //};
                 });
 
             services.AddSingleton<QueueService>();
@@ -103,13 +61,10 @@ namespace AATWebApi
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseIdentityServer();
-
 
             app.UseEndpoints(endpoints =>
             {

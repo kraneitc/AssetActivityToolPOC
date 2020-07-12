@@ -17,7 +17,12 @@ namespace AATWebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var result = await _apiManagerService.Client.GetAsync("https://sapn-enterpriseapim-poc2-ae-api.azure-api.net/sap-closeout/closeout");
-            return View(result.IsSuccessStatusCode);
+            //var result = await _apiManagerService.Client.GetAsync("https://localhost:44344/closeout");
+            return View(new
+            {
+                Result = result.IsSuccessStatusCode,
+                Token = _apiManagerService.Client.DefaultRequestHeaders.Authorization.Parameter
+            });
         }
     }
 }

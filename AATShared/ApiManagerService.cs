@@ -11,17 +11,12 @@ namespace AATShared
     {
         public HttpClient Client { get; }
 
-        public ApiManagerService(HttpClient client, DeveloperService devService, IOptions<ServiceSettings> settings, ILogger<ApiManagerService> logger)
+        public ApiManagerService(HttpClient client, IOptions<ServiceSettings> settings, ILogger<ApiManagerService> logger)
         {
             
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", settings.Value.ApiKey);
-
-            // If DEV environment, get DEV OAuth token. Otherwise get Managed Identity token
-            var isDev = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID"));
-            var token = isDev ?
-                devService.GetDeveloperToken(settings.Value) :
-                new AzureServiceTokenProvider().GetAccessTokenAsync(settings.Value.Resource);
-
+            var token =  new AzureServiceTokenProvider().GetAccessTokenAsync(settings.Value.Resource);
+            
             var auth = new AuthenticationHeaderValue("bearer", token.Result);
             client.DefaultRequestHeaders.Authorization = auth;
 

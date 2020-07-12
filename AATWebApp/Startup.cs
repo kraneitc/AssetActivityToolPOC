@@ -27,7 +27,6 @@ namespace AATWebApp
                     configuration.GetSection("ServiceSettings").Bind(settings);
                 });
 
-            services.AddTransient<DeveloperService>();
             services.AddHttpClient<ApiManagerService>();
 
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
