@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AATWebApi.Controllers
 {
-    [Authorize(Roles = "Contribute")]
+    [Authorize(Roles = "AssetJobManager")]
     [ApiController]
     [Route("[controller]")]
     public class CloseoutController : ControllerBase
