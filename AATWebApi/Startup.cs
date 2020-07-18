@@ -34,16 +34,17 @@ namespace AATWebApi
 
             IdentityModelEventSource.ShowPII = true;
 
-            var openidconfig = OpenIdConnectConfigurationRetriever.GetAsync("https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/v2.0/.well-known/openid-configuration", CancellationToken.None).Result;
+            //var openidconfig = OpenIdConnectConfigurationRetriever.GetAsync("https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/v2.0/.well-known/openid-configuration", CancellationToken.None).Result;
+            var openidconfig = OpenIdConnectConfigurationRetriever.GetAsync("https://login.microsoftonline.com/8c9b06d0-cb4a-4a03-b449-1f5a2548a910/v2.0/.well-known/openid-configuration", CancellationToken.None).Result;
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = "https://login.microsoftonline.com/90f5a437-d7ed-4905-ad39-adc1f0d6b579/";
+                    options.Authority = "https://login.microsoftonline.com/8c9b06d0-cb4a-4a03-b449-1f5a2548a910/";
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidIssuer = openidconfig.Issuer,
-                        ValidAudience = "53fc8f4f-f205-4c2b-968f-67a766f7cdd9",
+                        ValidAudience = "https://sapnomsdevaatapiaeapp.nonprod-oms-ae-appsvcenv.appserviceenvironment.net",
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKeys = openidconfig.SigningKeys
                     };
